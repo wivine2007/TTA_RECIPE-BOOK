@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Book</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-2xl bg-white p-8 rounded-xl shadow-xl">
+    <h1 class="text-3xl font-extrabold text-gray-800 text-center mb-6">Recipe Book</h1>
+    
+    <!-- Recipe Form -->
+    <form id="recipe-form" class="mb-6 space-y-4">
+      <input type="hidden" id="recipe-id">
+      <div>
+        <label for="recipe-name" class="block text-sm font-medium text-gray-700">Recipe Name</label>
+        <input type="text" id="recipe-name" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400" required>
+      </div>
+      <div>
+        <label for="recipe-ingredients" class="block text-sm font-medium text-gray-700">Ingredients</label>
+        <textarea id="recipe-ingredients" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400" required></textarea>
+      </div>
+      <button type="submit" class="w-full bg-indigo-500 text-white py-2 rounded-lg font-semibold shadow-md transition-transform transform hover:scale-105">Save Recipe</button>
+    </form>
+
+    <!-- Recipe List -->
+    <div id="recipe-list" class="space-y-4"></div>
+  </div>
+
+  <script>
+    // Sample Recipe Book App
+    const recipeForm = document.getElementById('recipe-form');
+    const recipeList = document.getElementById('recipe-list');
+    const recipeNameInput = document.getElementById('recipe-name');
+    const recipeIngredientsInput = document.getElementById('recipe-ingredients');
+    const recipeIdInput = document.getElementById('recipe-id');
+
+    let recipes = [];
+
+    recipeForm.addEventListener('submit', (e) => {
+      e.preventDefault();iououuo
+      const id = recipeIdInput.value;
+      const name = recipeNameInput.value.trim();
+      const ingredients = recipeIngredientsInput.value.trim();
+
+      if (name && ingredients) {
+        if (id) {
+          recipes = recipes.map(recipe => recipe.id == id ? { ...recipe, name, ingredients } : recipe);
+        } else {
+          recipes.push({ id: Date.now(), name, ingredients });
+        }
+        renderRecipes();
+        recipeForm.reset();
+        recipeIdInput.value = '';
+      }
+    });
+
+    function renderRecipes() {
+      recipeList.innerHTML = '';
+      recipes.forEach((recipe) => {
+        const recipeItem = document.createElement('div');
+        recipeItem.className = 'p-5 bg-white rounded-lg shadow-lg flex flex-col';
+        recipeItem.innerHTML = `
+          <h3 class='text-lg font-bold text-gray-800'>${recipe.name}</h3>
+          <p class='text-sm text-gray-600 mt-2'>${recipe.ingredients}</p>
+          <div class='mt-4 flex justify-between'>
+            <button class='bg-yellow-500 text-white px-3 py-1 rounded-lg shadow-md transition-transform transform hover:scale-105' onclick='editRecipe(${recipe.id})'>Edit</button>
+            <button class='bg-red-500 text-white px-3 py-1 rounded-lg shadow-md transition-transform transform hover:scale-105' onclick='deleteRecipe(${recipe.id})'>Delete</button>
+          </div>
+        `;
+        recipeList.appendChild(recipeItem);
+      });
+    }
+
+    function editRecipe(id) {
+      const recipe = recipes.find(recipe => recipe.id === id);
+      if (recipe) {
+        recipeIdInput.value = recipe.id;
+        recipeNameInput.value = recipe.name;
+        recipeIngredientsInput.value = recipe.ingredients;
+      }
+    }
+
+    function deleteRecipe(id) {
+      recipes = recipes.filter(recipe => recipe.id !== id);
+      renderRecipes();
+    }
+
+    renderRecipes();
+  </script>
+</body>
+</html>
